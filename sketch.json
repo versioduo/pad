@@ -1,0 +1,6 @@
+{
+  "cpu": {
+    "fqbn": "versioduo:samd:pad",
+    "name": "V2 pad"
+  }
+}
