@@ -200,7 +200,7 @@ private:
 
   void exportSettings(JsonArray json) override {
     {
-      JsonObject setting = json.createNestedObject();
+      JsonObject setting = json.add<JsonObject>();
       setting["type"]    = "number";
       setting["title"]   = "MIDI";
       setting["label"]   = "Channel";
@@ -211,14 +211,14 @@ private:
     }
 
     {
-      JsonObject setting = json.createNestedObject();
+      JsonObject setting = json.add<JsonObject>();
       setting["type"]    = "drum";
       setting["title"]   = "Pad";
       setting["path"]    = "drum";
     }
 
     {
-      JsonObject setting = json.createNestedObject();
+      JsonObject setting = json.add<JsonObject>();
       setting["type"]    = "color";
       setting["title"]   = "Light";
       setting["path"]    = "color";
@@ -228,14 +228,14 @@ private:
   void exportConfiguration(JsonObject json) override {
     {
       json["#midi"]         = "The MIDI settings";
-      JsonObject jsonMidi  = json.createNestedObject("midi");
+      JsonObject jsonMidi  = json["midi"].to<JsonObject>();
       jsonMidi["#channel"] = "The channel to send notes and control values to";
       jsonMidi["channel"]  = config.channel + 1;
     }
 
     {
       json["#drum"]           = "The drum's MIDI settings";
-      JsonObject jsonDrum     = json.createNestedObject("drum");
+      JsonObject jsonDrum     = json["drum"].to<JsonObject>();
       jsonDrum["#controller"] = "The controller number, 0 = disabled";
       jsonDrum["controller"]  = config.controller;
 
@@ -251,7 +251,7 @@ private:
 
     {
       json["#color"]    = "The pad color. Hue, saturation, brightness, 0..127";
-      JsonArray jsonLed = json.createNestedArray("color");
+      JsonArray jsonLed = json["color"].to<JsonArray>();
       jsonLed.add(config.color.h);
       jsonLed.add(config.color.s);
       jsonLed.add(config.color.v);
@@ -327,46 +327,46 @@ private:
     json["channel"] = config.channel;
 
     // List of notes to play
-    JsonArray jsonNotes = json.createNestedArray("notes");
+    JsonArray jsonNotes = json["notes"].to<JsonArray>();
     {
-      JsonObject jsonEcho = jsonNotes.createNestedObject();
+      JsonObject jsonEcho = jsonNotes.add<JsonObject>();
       jsonEcho["name"]    = "Echo Test";
       jsonEcho["number"]  = V2MIDI::B(2);
     }
 
     {
-      JsonObject jsonLed = jsonNotes.createNestedObject();
+      JsonObject jsonLed = jsonNotes.add<JsonObject>();
       jsonLed["name"]    = "Default";
       jsonLed["number"]  = V2MIDI::C(3);
     }
 
     for (uint8_t i = 0; i < V2Base::countof(_leds); i++) {
-      JsonObject jsonLed = jsonNotes.createNestedObject();
+      JsonObject jsonLed = jsonNotes.add<JsonObject>();
       jsonLed["name"]    = _leds[i].name;
       jsonLed["number"]  = V2MIDI::C(3) + 1 + i;
     }
 
-    JsonArray jsonControllers = json.createNestedArray("controllers");
+    JsonArray jsonControllers = json["controllers"].to<JsonArray>();
     {
-      JsonObject jsonController = jsonControllers.createNestedObject();
+      JsonObject jsonController = jsonControllers.add<JsonObject>();
       jsonController["name"]    = "Hue";
       jsonController["number"]  = (uint8_t)CC::Color;
       jsonController["value"]   = (uint8_t)(_led.h / 360.f * 127.f);
     }
     {
-      JsonObject jsonController = jsonControllers.createNestedObject();
+      JsonObject jsonController = jsonControllers.add<JsonObject>();
       jsonController["name"]    = "Saturation";
       jsonController["number"]  = (uint8_t)CC::Saturation;
       jsonController["value"]   = (uint8_t)(_led.s * 127.f);
     }
     {
-      JsonObject jsonController = jsonControllers.createNestedObject();
+      JsonObject jsonController = jsonControllers.add<JsonObject>();
       jsonController["name"]    = "Brightness";
       jsonController["number"]  = (uint8_t)CC::Brightness;
       jsonController["value"]   = (uint8_t)(_led.v * 127.f);
     }
     {
-      JsonObject jsonController = jsonControllers.createNestedObject();
+      JsonObject jsonController = jsonControllers.add<JsonObject>();
       jsonController["name"]    = "Rainbow";
       jsonController["number"]  = (uint8_t)CC::Rainbow;
       jsonController["value"]   = (uint8_t)(_rainbow * 127.f);
@@ -377,14 +377,14 @@ private:
     json["channel"] = config.channel;
 
     if (config.controller > 0) {
-      JsonArray jsonController = json.createNestedArray("controllers");
-      JsonObject jsonPressure = jsonController.createNestedObject();
+      JsonArray jsonController = json["controllers"].to<JsonArray>();
+      JsonObject jsonPressure = jsonController.add<JsonObject>();
       jsonPressure["name"]    = "Pressure";
       jsonPressure["number"]  = config.controller;
     }
 
-    JsonArray jsonNotes = json.createNestedArray("notes");
-    JsonObject note      = jsonNotes.createNestedObject();
+    JsonArray jsonNotes = json["notes"].to<JsonArray>();
+    JsonObject note      = jsonNotes.add<JsonObject>();
     note["name"]         = "Drum";
     note["number"]       = config.note;
     note["aftertouch"]   = true;
